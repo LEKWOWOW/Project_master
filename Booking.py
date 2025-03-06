@@ -51,7 +51,7 @@ class Bus:
         else:
             print("❌ ไม่มีที่ว่างเหลือละจะ ")
     def __str__(self):
-        return f"Bus {self.__bus_name} | Available Seats: {self.__available_seat}/{self.__capacity}"
+        return f"Bus {self.__bus_name} | ที่นั่งคงเหลือ: {self.__available_seat}/{self.__capacity}"
 class Schedule:
     def __init__(self,schedule_id):
         self.__schedule_id =schedule_id
