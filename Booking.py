@@ -2,13 +2,15 @@ class Compny:
     def __init__(self,ticket_list,schedule_list,customer_list):
         self.__ticket_list = ticket_list
         self.__schedule_list = schedule_list
+
 class Booking:
     booking_id = 1
-    def __init__(self,date,status,bus):
+    def __init__(self,date,status,bus,schedule):
         self.__booking_id = Booking.booking_id
         self.__date = date
         self.__status = status
         self.__bus = bus
+        self.__schedule = schedule
         Booking.booking_id +=1
     def booking_seat(self,seat_book):
         if  self.__bus.check_available_seat() >= seat_book:
@@ -37,13 +39,13 @@ class Seat:
         self.__seat_id
     
 class Bus:
-    def __init__(self,bus_id,bus_name,capacity):
-        self.__bus_id = bus_id
+    def __init__(self,license_plate,bus_name,capacity):
+        self.__license_plate = license_plate
         self.__bus_name = bus_name
         self.__capacity = capacity
         self.__available_seat = capacity
     @property
-    def bus_id(self):
+    def license_plat(self):
         return self.__bus_id
     def check_available_seat(self):
         return self.__available_seat 
@@ -53,7 +55,7 @@ class Bus:
         else:
             print("❌ ไม่มีที่ว่างเหลือละจะ ")
     def __str__(self):
-        return f"Bus 🚌 {self.__bus_name} 💺 ที่นั่งคงเหลือ: {self.__available_seat}/{self.__capacity}"
+        return f"Bus 🚌 {self.__license_plate} 💺 ที่นั่งคงเหลือ: {self.__available_seat}/{self.__capacity}"
 class Schedule:
     def __init__(self,schedule_id):
         self.__schedule_id =schedule_id
@@ -69,9 +71,14 @@ class Schedule:
     def station_number(self):
         return self.__station_number
 def create_instance():
-     bus1 = Bus("B301","รถมินิบัส",40)
-     booking = Booking("02-9-2025","OK",bus1)
-     booking.booking_seat(41)
+     bus_list = []
+     bus1 = Bus("กพ 289 กรุงเทพ","รถธรรมดา",20)
+     bus2 = Bus("กพ 309 เพชรบุรี","รถปรับอากาศ",20)
+     bus3 = Bus("กช 208 ลำปาง","รถเอกชนร่วมบริการปรับอากาศ",25)
+     bus_list.append(bus1)
+     bus_list.append(bus2)
+     bus_list.append(bus3)
+     print(bus_list)
 create_instance()
 
 
