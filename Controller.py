@@ -30,7 +30,8 @@ class Schedule:
     def station_number(self):
         return self.__station_number
 station1 = Station("10","gg")
-schedule1 = Schedule(10)ee
+schedule1 = Schedule(10)
+lek2
 
 
     
