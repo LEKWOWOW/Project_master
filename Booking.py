@@ -71,8 +71,7 @@ class Schedule:
 def create_instance():
      bus1 = Bus("B301","รถมินิบัส",40)
      booking = Booking("02-9-2025","OK",bus1)
-     booking.booking_seat(20)
-     print(booking.bus)
+     booking.booking_seat(41)
 create_instance()
 
 
