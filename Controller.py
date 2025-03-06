@@ -31,8 +31,6 @@ class Schedule:
         return self.__station_number
 station1 = Station("10","gg")
 schedule1 = Schedule(10)
-lek2 sdsdsddsdwwewe
-
-
+print(schedule1.station_number)
     
         
