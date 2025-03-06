@@ -16,11 +16,10 @@ class Booking:
             self.__status ="✔️จองสำเร็จ"
         else:
             print("❌ไม่มีที่เหลือแล้วจ้า")
-        
-    def show_all(self):
-        print(f"")
-    def add_bus(self,bus):
-        self.__bus.append(bus)
+    @property
+    def bus(self):
+        return self.__bus
+    
 class Station:
     def __init__(self,station_id,station_name,capacity):
         self.__station_id = station_id
@@ -43,6 +42,9 @@ class Bus:
         self.__bus_name = bus_name
         self.__capacity = capacity
         self.__available_seat = capacity
+    @property
+    def bus_id(self):
+        return self.__bus_id
     def check_available_seat(self):
         return self.__available_seat 
     def reuce_seat(self,number_seat):
@@ -51,7 +53,7 @@ class Bus:
         else:
             print("❌ ไม่มีที่ว่างเหลือละจะ ")
     def __str__(self):
-        return f"Bus {self.__bus_name} | ที่นั่งคงเหลือ: {self.__available_seat}/{self.__capacity}"
+        return f"Bus 🚌 {self.__bus_name} 💺 ที่นั่งคงเหลือ: {self.__available_seat}/{self.__capacity}"
 class Schedule:
     def __init__(self,schedule_id):
         self.__schedule_id =schedule_id
@@ -70,7 +72,7 @@ def create_instance():
      bus1 = Bus("B301","รถมินิบัส",40)
      booking = Booking("02-9-2025","OK",bus1)
      booking.booking_seat(20)
-     print(bus1)
+     print(booking.bus)
 create_instance()
 
 
