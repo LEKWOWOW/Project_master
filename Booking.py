@@ -64,6 +64,8 @@ class Station:
     def __init__(self,station_id,station_name,capacity):
         self.__station_id = station_id
         self.__station_name = station_name
+    def __str__(self):
+        pass
       
 
     @property
@@ -117,6 +119,7 @@ def create_instance():
      bus_list.append(bus2)
      bus_list.append(bus3)
      print(bus_list)
+######เดวว่ากันต่อ#####
 
 
 
