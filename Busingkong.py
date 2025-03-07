@@ -219,7 +219,7 @@ def create_instance():
     # print(bus_list)
     ######################################### KONG
     man1 = Customer("001", "bob", "kongza@gmail", "08-2256-1122")
-    ticket1 = Ticket("112", 531, "ยังไม่ได้ชำระเงิน") # price อันนี้เราต้องไปดึงมาชะ
+    ticket1 = Ticket("112", 531, "ยังไม่ได้ชำระเงิน") # price อันนี้เราต้องไปดึงมาชะ ดึงจาก sation ไปเก็บไว้ในticket เราจะคำนว๊จาก stationดีไหมเงินอะ
     #man1_book = Booking("03-08-2546", "เปิดใช้งาน", bus1, None) #class Booking ใช้ไงงง
     print(ticket1.ticket_detail())
     # man1.add_booking(man1_book)

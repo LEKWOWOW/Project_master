@@ -63,6 +63,62 @@ class User:
             for number, book in enumerate(self.__books, 1):
                 print(f"{number}. {book.book_detail()}")
         else: print(f"❌ ไม่พบสมุดการจองในผู้ใช้นี้")
+    def view_payments(self):
+        if self.__payments:
+            for number, payment in enumerate(self.__payments, 1):
+                print(f"{number}. {payment.payment_detail()}")
+        else: print(f"❌ ไม่พบการจ่ายในผู้ใช้นี้")
+    def payment_by_ticket_id(self, ticket_id):
+        if self.__books:
+            for book in self.__books:
+                for ticket in book.tickets.ticket_id:
+                    if ticket.ticket_id == ticket_id:
+                        if ticket.ticket_status == "ยังไม่ได้ชำระเงิน":
+                            ticket.process_payment(ticket.ticket_price)
+                            return
+                        else:
+                            print(f"❌ ไม่สามารถชำระเงินได้")
+            print(f"❌ ไม่พบตั๋ว")
+        else: print(f"❌ ไม่พบสมุดการจองในผู้ใช้นี้")
+    def refund_by_ticket_id(self, ticket_id):
+        if self.__books:
+            for book in self.__books:
+                for ticket in book.tickets.ticket_id:
+                    if ticket.ticket_id == ticket_id:
+                        if ticket.ticket_status == "ชำระเงินเรียบร้อย":
+                            ticket.process_refund(ticket.ticket_price)
+                            return
+                        else:
+                            print(f"❌ ไม่สามารถคืนเงินได้")
+            print(f"❌ ไม่พบตั๋ว")
+        else: print(f"❌ ไม่พบสมุดการจองในผู้ใช้นี้")
+
+class Customer(User):
+    def __init__(self, user_id, user_name, user_email, user_phone):
+        super().__init__(user_id, user_name, user_email, user_phone)
+    def add_booking(self, book):
+        return super().add_booking(book)
+    def add_payment(self, payment):
+        return super().add_payment(payment)
+    def view_books(self):
+        return super().view_books()
+    def view_payments(self):
+        return super().view_payments()
+    
+class Payment:
+    def __init__(self, payment_id, payment_date, payment_method, ticket = Ticket):
+        self.__payment_id = payment_id
+        self.__payment_date = payment_date
+        self.__payment_method = payment_method
+        self.__ticket = ticket
+    def payment_detail(self):
+        return f"หมายเลข: {self.__payment_id}, เวลา: {self.__payment_date}, Method: {self.__payment_method}, ตั๋ว: {self.__ticket.ticket_id}, ราคา: {self.__ticket.ticket_price}, สถานะ: {self.__ticket.ticket_status}"
+    def process_payment(self, price):
+        self.__ticket.ticket_status = "ชำระเงินเรียบร้อย"
+        print(f"ชำระเงินแล้วเป็นจำนวน {price}")
+    def process_refund(self, price):
+        self.__ticket.ticket_status = "คืนเงินเรียบร้อย"
+        print(f"คืนเงินแล้วเป็นจำนวน {price}")
     
 class Station:
     def __init__(self,station_id,station_name,capacity):
@@ -120,6 +176,7 @@ def create_instance():
      bus2 = Bus("กพ 309 เพชรบุรี","รถปรับอากาศ",20)
      bus3 = Bus("กช 208 ลำปาง","รถเอกชนร่วมบริการปรับอากาศ",25)
      user  = User("001", "bob", "kongza@gmail", "08-2256-1122")
+     
      bus_list.append(bus1)
      bus_list.append(bus2)
      bus_list.append(bus3)
