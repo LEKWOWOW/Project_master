@@ -11,6 +11,7 @@ class Booking:
         self.__status = status
         self.__bus = bus
         self.__schedule = schedule
+        self.__tickets = []
         Booking.booking_id +=1
     def booking_seat(self,seat_book):
         if  self.__bus.check_available_seat() >= seat_book:
@@ -21,6 +22,43 @@ class Booking:
     @property
     def bus(self):
         return self.__bus
+class Ticket:
+    def __init__(self, ticket_id, ticket_price, ticket_status):
+        self.__ticket_id = ticket_id
+        self.__ticket_price = ticket_price
+        self.__ticket_status = ticket_status
+    @property
+    def ticket_id(self):
+        return self.__ticket_id
+    @property
+    def ticket_status(self):
+        return self.__ticket_status
+    @property
+    def ticket_price(self):
+        return self.__ticket_price
+    def ticket_detail(self):
+        return f"หมายเลข: {self.__ticket_id}, ราคา: {self.__ticket_price}, สถานะ: {self.__ticket_status}"
+    
+class User:
+    def __init__(self, user_id, user_name, user_email, user_phone):
+        self.__user_id = user_id
+        self.__user_name = user_name
+        self.__user_email = user_email
+        self.__user_phone = user_phone
+        self.__books = []
+        self.__payments = []
+    def add_booking(self, book):
+        if book not in self.__books:
+            self.__books.append(book)
+            print(f"✔️ เพิ่มสมุดจองแล้ว")
+        else: print(f"❌ คุณมีสมุดจองหมายเลข {book.booking_id} อยู่แล้ว")
+    def add_payment(self, payment):
+        self.__payments.append(payment)
+    def view_books(self):
+        if self.__books:
+            for number, book in enumerate(self.__books, 1):
+                print(f"{number}. {book.book_detail()}")
+        else: print(f"❌ ไม่พบสมุดการจองในผู้ใช้นี้")
     
 class Station:
     def __init__(self,station_id,station_name,capacity):
@@ -79,7 +117,7 @@ def create_instance():
      bus_list.append(bus2)
      bus_list.append(bus3)
      print(bus_list)
-create_instance()
+
 
 
     
