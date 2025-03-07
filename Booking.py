@@ -17,7 +17,6 @@ class Booking:
         Booking.booking_id += 1
 
     def booking_seat_by_number(self, seat_number):
-        """เรียกเมธอดของ Bus เพื่อจองที่นั่งตามเลขที่นั่ง"""
         self.__bus.book_seat_by_number(seat_number)
     
     def add_ticket(self, ticket):
@@ -133,8 +132,21 @@ class Bus:
     def __str__(self):
         return f"Bus 🚌 {self.__license_plate} 💺 ที่นั่งคงเหลือ: {self.__available_seat}/{self.__capacity}"
 
+class Schedule:
+    def __init__(self, schedule_id, station):
+        self.__schedule_id = schedule_id
+        self.__station = station
+    
+    @property
+    def schedule_id(self):
+        return self.__schedule_id
+    
+    @property
+    def station(self):
+        return self.__station
+
 def create_instance():
-    bus1 = Bus("กพ 289 กรุงเทพ", "รถธรรมดา", 40)
+    bus1 = Bus("กพ 289 กรุงเทพ", "รถธรรมดา", 5)
     print(f"ที่นั่งก่อนจอง: {bus1.seat_list}")
 
     booking1 = Booking("01-02-2025", "รอดำเนินการ", bus1, "เส้นทาง A")
