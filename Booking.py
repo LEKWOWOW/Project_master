@@ -19,6 +19,10 @@ class Booking:
             self.__status ="✔️จองสำเร็จ"
         else:
             print("❌ไม่มีที่เหลือแล้วจ้า")
+    def add_ticket(self,ticket):
+        self.__tickets.append(ticket)
+    def book_detail(self):
+        return (f"หมายเลขสมุดจอง{self.__booking_id} เวลา{self.__date} สถานะ{self.__status} bus {self.__bus} ตารางเดินรถ {self.__schedule} ตั๋ว{self.__tickets}")
     @property
     def bus(self):
         return self.__bus
@@ -115,10 +119,12 @@ def create_instance():
      bus1 = Bus("กพ 289 กรุงเทพ","รถธรรมดา",20)
      bus2 = Bus("กพ 309 เพชรบุรี","รถปรับอากาศ",20)
      bus3 = Bus("กช 208 ลำปาง","รถเอกชนร่วมบริการปรับอากาศ",25)
+     user  = User("001", "bob", "kongza@gmail", "08-2256-1122")
      bus_list.append(bus1)
      bus_list.append(bus2)
      bus_list.append(bus3)
-     print(bus_list)
+create_instance()
+     
 ######เดวว่ากันต่อ#####
 
 
