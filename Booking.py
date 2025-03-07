@@ -176,10 +176,15 @@ def create_instance():
      bus2 = Bus("กพ 309 เพชรบุรี","รถปรับอากาศ",20)
      bus3 = Bus("กช 208 ลำปาง","รถเอกชนร่วมบริการปรับอากาศ",25)
      user  = User("001", "bob", "kongza@gmail", "08-2256-1122")
-     
+     man1 = Customer("001", "bob", "kongza@gmail", "08-2256-1122")
+     ticket1 = Ticket("112", 531, "ยังไม่ได้ชำระเงิน") ## ราคาเดวคำนวณจาก สถานี ต้นทาง ดีไหมนะ แต่ไม่รู้ไงว่าหน่วยละเท่าไรหรือเอา เป็นราคาที่ฟิกไปเลย คือไม่รู้ว่า เราวิ่งผ่านหนึ่งสถานี มันจะเสียเท่าไหร่อะดิ ช่วยคิดหน่อย
      bus_list.append(bus1)
      bus_list.append(bus2)
      bus_list.append(bus3)
+     print(ticket1.ticket_detail())
+     payment1 = Payment("852", "01-02-2003", "cash", ticket1)
+     man1.add_payment(payment1)
+     man1.view_payments()
 create_instance()
      
 ######เดวว่ากันต่อ#####
