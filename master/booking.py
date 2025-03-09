@@ -1,4 +1,6 @@
+from datetime import datetime
 class Bus:
+    
     def __init__(self, license_plate, bus_name, capacity):
         self.license_plate = license_plate
         self.bus_name = bus_name
@@ -45,9 +47,9 @@ class Payment:
 class Booking:
     booking_id = 1
 
-    def __init__(self, date, bus, schedule):
+    def __init__(self, bus, schedule):
         self.booking_id = Booking.booking_id
-        self.date = date
+        self.date = datetime.today().strftime("%d-%m-%Y")  # ใช้วันที่ปัจจุบัน
         self.status = "Pending"
         self.bus = bus
         self.schedule = schedule
@@ -61,6 +63,8 @@ class Booking:
             return ticket
         return None
 
+from datetime import datetime
+
 class Customer:
     def __init__(self, user_id, user_name):
         self.user_id = user_id
@@ -72,7 +76,8 @@ class Customer:
         self.bookings.append(booking)
 
     def make_payment(self, ticket):
-        payment = Payment(f"P{ticket.ticket_id}", "01-02-2025", "Cash", ticket)
+        payment_date = datetime.today().strftime("%d-%m-%Y")  # ใช้วันที่ปัจจุบัน
+        payment = Payment(f"P{ticket.ticket_id}", payment_date, "Cash", ticket)
         payment.process_payment()
         self.payments.append(payment)
 
@@ -94,7 +99,7 @@ class Company:
         bus = next((b for b in schedule.buses if b.license_plate == bus_plate), None) if schedule else None
 
         if customer and schedule and bus:
-            booking = Booking("01-02-2025", bus, schedule)
+            booking = Booking(bus, schedule)
             ticket = booking.book_seat(seat_number)
 
             if ticket:

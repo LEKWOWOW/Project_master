@@ -1,6 +1,7 @@
 from fasthtml.common import *
 from create_instance import company
 from booking import *
+from datetime import datetime
 
 app, rt = fast_app()
 
@@ -11,19 +12,30 @@ def home():
         Body(
             H1("Select Schedule 🚌"),
             Ul(
-                *[Li(A(f"Schedule: {s.route} (Price: {s.ticket_price} Baht)", href=f"/schedule/{s.schedule_id}")) for s in company.schedules]
+                *[
+                    Li(A(f"ตารางเดินรถ: {s.route} (Price: {s.ticket_price} บาท)", 
+                         href=f"/schedule/{s.schedule_id}"))
+                    for s in company.schedules
+                ]
             )
         )
     )
 
 @rt("/schedule/{schedule_id}")
 def select_bus(schedule_id: str):
-    schedule = next(s for s in company.schedules if s.schedule_id == schedule_id)
+    schedule = next((s for s in company.schedules if s.schedule_id == schedule_id), None)
+    
+    if not schedule:
+        return Html(Body(H2("❌ Schedule not found!"), A("Back", href="/")))
+
     return Html(
         Body(
             H2(f"Schedule {schedule.route} - Ticket Price: {schedule.ticket_price} Baht"),
             Ul(
-                *[Li(A(str(bus), href=f"/bus/{schedule_id}/{bus.license_plate}")) for bus in schedule.buses]
+                *[
+                    Li(A(str(bus), href=f"/bus/{schedule_id}/{bus.license_plate}"))
+                    for bus in schedule.buses
+                ]
             ),
             A("Back", href="/")
         )
@@ -31,25 +43,70 @@ def select_bus(schedule_id: str):
 
 @rt("/bus/{schedule_id}/{license_plate}")
 def select_seat(schedule_id: str, license_plate: str):
-    schedule = next(s for s in company.schedules if s.schedule_id == schedule_id)
+    schedule = next((s for s in company.schedules if s.schedule_id == schedule_id), None)
+    if not schedule:
+        return Html(Body(H2("❌ Schedule not found!"), A("Back", href="/")))
+
+    bus = next((b for b in schedule.buses if b.license_plate == license_plate), None)
+    if not bus:
+        return Html(Body(H2("❌ Bus not found!"), A("Back", href=f"/schedule/{schedule_id}")))
+
     return Html(
         Body(
-            H2(f"Booking seats on {license_plate} - Ticket Price: {schedule.ticket_price} Baht"),
+            H2(f"Booking seats on {bus.license_plate} - Ticket Price: {schedule.ticket_price} Baht"),
             Form(
-                Input(type="number", name="seat_number", placeholder="Seat Number", min=1, max=10, required=True),
-                Button("Book and Pay", type="submit"),
-                method="post", action=f"/book_and_pay/{schedule_id}/{license_plate}"
+                Input(type="number", name="seat_number", placeholder="Seat Number", min=1, max=bus.capacity, required=True),
+                Button("Book and Proceed to Payment", type="submit"),
+                method="post", action=f"/payment/{schedule_id}/{license_plate}"
             ),
             A("Back", href=f"/schedule/{schedule_id}")
         )
     )
 
-@rt("/book_and_pay/{schedule_id}/{license_plate}")
-def book_and_pay(schedule_id: str, license_plate: str, seat_number: int):
-    message = company.create_booking("001", schedule_id, license_plate, seat_number)
+@rt("/payment/{schedule_id}/{license_plate}")
+def payment(schedule_id: str, license_plate: str, seat_number: str):
+    try:
+        seat_number = int(seat_number)
+    except ValueError:
+        return Html(Body(P("❌ Invalid seat number!"), A("Go Home", href="/")))
+
+    booking_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
     return Html(
         Body(
-            P(message),
+            H2("Payment Page"),
+            P(f"Bus: {license_plate}"),
+            P(f"Seat Number: {seat_number}"),
+            P(f"Price: {company.schedules[0].ticket_price} Baht"),
+            P(f"Booking Time: {booking_time}"),
+            Form(
+                Input(type="hidden", name="seat_number", value=str(seat_number)),
+                Input(type="hidden", name="booking_time", value=booking_time),
+                Button("Confirm Payment", type="submit"),
+                method="post", action=f"/confirm_payment/{schedule_id}/{license_plate}"
+            ),
+            A("Cancel", href="/")
+        )
+    )
+
+@rt("/confirm_payment/{schedule_id}/{license_plate}")
+def confirm_payment(schedule_id: str, license_plate: str, seat_number: str, booking_time: str):
+    try:
+        seat_number = int(seat_number)
+    except ValueError:
+        return Html(Body(P("❌ Invalid seat number!"), A("Go Home", href="/")))
+
+    # สร้างการจองและทำการชำระเงิน
+    message = company.create_booking("001", schedule_id, license_plate, seat_number)
+
+    return Html(
+        Body(
+            H2("✅ Booking Successful!"),
+            P(f"Bus: {license_plate}"),
+            P(f"Seat Number: {seat_number}"),
+            P(f"Price: {company.schedules[0].ticket_price} Baht"),
+            P(f"Booking Time: {booking_time}"),
+            P("✅ Payment Confirmed"),
             A("Go Home", href="/")
         )
     )
