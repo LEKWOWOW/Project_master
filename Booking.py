@@ -92,11 +92,13 @@ class Payment:
         self.__payment_id = payment_id
         self.__payment_date = payment_date
         self.__payment_method = payment_method
-        self.__ticket = ticket
+        self.__ticket = []
 
     def payment_detail(self):
         return (f"หมายเลข: {self.__payment_id}, เวลา: {self.__payment_date}, Method: {self.__payment_method}, "
                 f"ตั๋ว: {self.__ticket.ticket_id}, ราคา: {self.__ticket.ticket_price}, สถานะ: {self.__ticket.ticket_status}")
+    def add_ticket(self,ticket):
+        return self.__ticket.append(ticket)
 
     def process_payment(self):
         self.__ticket._Ticket__ticket_status = "ชำระเงินเรียบร้อย"
@@ -127,7 +129,7 @@ class Bus:
             self.__available_seat -= 1
             print(f"✔️ จองที่นั่ง {seat_number} สำเร็จ")
         else:
-            print(f"❌ ที่นั่ง {seat_number} ไม่ว่าง หรือไม่มีอยู่ในระบบ")
+            print(f"❌ ที่นั่ง {seat_number} ไม่ว่าง")
 
     def __str__(self):
         return f"Bus 🚌 {self.__license_plate} 💺 ที่นั่งคงเหลือ: {self.__available_seat}/{self.__capacity}"
@@ -159,7 +161,7 @@ def create_instance():
     print(bus1)
 
     ticket1 = Ticket("112", 531, "ยังไม่ได้ชำระเงิน")
-    payment1 = Payment("852", "01-02-2025", "cash", ticket1)
+    payment1 = Payment("852", "01-02-2025", "cash")
     customer = Customer("001", "Bob", "kongza@gmail", "08-2256-1122")
     customer.add_payment(payment1)
     customer.view_payments()
