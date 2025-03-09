@@ -2,9 +2,7 @@ from fasthtml.common import *
 from create_instance import company
 from booking import *
 from datetime import datetime
-
 app, rt = fast_app()
-
 @rt("/")
 def home():
     return Html(
@@ -20,7 +18,6 @@ def home():
             )
         )
     )
-
 @rt("/schedule/{schedule_id}")
 def select_bus(schedule_id: str):
     schedule = next((s for s in company.schedules if s.schedule_id == schedule_id), None)
@@ -40,7 +37,6 @@ def select_bus(schedule_id: str):
             A("Back", href="/")
         )
     )
-
 @rt("/bus/{schedule_id}/{license_plate}")
 def select_seat(schedule_id: str, license_plate: str):
     schedule = next((s for s in company.schedules if s.schedule_id == schedule_id), None)
@@ -62,16 +58,13 @@ def select_seat(schedule_id: str, license_plate: str):
             A("Back", href=f"/schedule/{schedule_id}")
         )
     )
-
 @rt("/payment/{schedule_id}/{license_plate}")
 def payment(schedule_id: str, license_plate: str, seat_number: str):
     try:
         seat_number = int(seat_number)
     except ValueError:
         return Html(Body(P("❌ Invalid seat number!"), A("Go Home", href="/")))
-
     booking_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-
     return Html(
         Body(
             H2("Payment Page"),
@@ -88,7 +81,6 @@ def payment(schedule_id: str, license_plate: str, seat_number: str):
             A("Cancel", href="/")
         )
     )
-
 @rt("/confirm_payment/{schedule_id}/{license_plate}")
 def confirm_payment(schedule_id: str, license_plate: str, seat_number: str, booking_time: str):
     try:
@@ -96,7 +88,6 @@ def confirm_payment(schedule_id: str, license_plate: str, seat_number: str, book
     except ValueError:
         return Html(Body(P("❌ Invalid seat number!"), A("Go Home", href="/")))
 
-    # สร้างการจองและทำการชำระเงิน
     message = company.create_booking("001", schedule_id, license_plate, seat_number)
 
     return Html(
@@ -110,5 +101,4 @@ def confirm_payment(schedule_id: str, license_plate: str, seat_number: str, book
             A("Go Home", href="/")
         )
     )
-
 serve()
