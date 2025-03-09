@@ -64,7 +64,27 @@ def payment(schedule_id: str, license_plate: str, seat_number: str):
         seat_number = int(seat_number)
     except ValueError:
         return Html(Body(P("❌ Invalid seat number!"), A("Go Home", href="/")))
+
+    schedule = next((s for s in company.schedules if s.schedule_id == schedule_id), None)
+    if not schedule:
+        return Html(Body(H2("❌ Schedule not found!"), A("Back", href="/")))
+
+    bus = next((b for b in schedule.buses if b.license_plate == license_plate), None)
+    if not bus:
+        return Html(Body(H2("❌ Bus not found!"), A("Back", href=f"/schedule/{schedule_id}")))
+
+    # **🔍 ตรวจสอบว่าที่นั่งถูกจองไปแล้วหรือไม่**
+    if seat_number not in bus.seat_list:
+        return Html(
+            Body(
+                H2("❌ Payment Failed!"),
+                P(f"Seat {seat_number} has already been booked."),
+                A("Go Home", href="/")
+            )
+        )
+
     booking_time = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+
     return Html(
         Body(
             H2("Payment Page"),
@@ -81,13 +101,33 @@ def payment(schedule_id: str, license_plate: str, seat_number: str):
             A("Cancel", href="/")
         )
     )
+
 @rt("/confirm_payment/{schedule_id}/{license_plate}")
-def confirm_payment(schedule_id: str, license_plate: str, seat_number: str, booking_time: str):
+def confirm_payment(schedule_id: str, license_plate: str, seat_number: str):
     try:
         seat_number = int(seat_number)
     except ValueError:
         return Html(Body(P("❌ Invalid seat number!"), A("Go Home", href="/")))
 
+    # ตรวจสอบว่าที่นั่งยังว่างอยู่หรือไม่
+    schedule = next((s for s in company.schedules if s.schedule_id == schedule_id), None)
+    if not schedule:
+        return Html(Body(H2("❌ Schedule not found!"), A("Back", href="/")))
+
+    bus = next((b for b in schedule.buses if b.license_plate == license_plate), None)
+    if not bus:
+        return Html(Body(H2("❌ Bus not found!"), A("Back", href=f"/schedule/{schedule_id}")))
+
+    if seat_number not in bus.seat_list:
+        return Html(
+            Body(
+                H2("❌ Booking Failed!"),
+                P(f"Seat {seat_number} has already been booked."),
+                A("Go Home", href="/")
+            )
+        )
+
+    # ถ้าที่นั่งยังว่าง ให้ทำการจอง
     message = company.create_booking("001", schedule_id, license_plate, seat_number)
 
     return Html(
@@ -96,9 +136,9 @@ def confirm_payment(schedule_id: str, license_plate: str, seat_number: str, book
             P(f"Bus: {license_plate}"),
             P(f"Seat Number: {seat_number}"),
             P(f"Price: {company.schedules[0].ticket_price} Baht"),
-            P(f"Booking Time: {booking_time}"),
             P("✅ Payment Confirmed"),
             A("Go Home", href="/")
         )
     )
+
 serve()
