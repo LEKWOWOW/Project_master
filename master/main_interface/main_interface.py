@@ -1,5 +1,7 @@
-from fasthtml.common import *
+from fasthtml.common import * 
 import os
+from fasthtml.staticfiles import StaticFiles
+
 
 #DF6D14 ส้มเข้ม
 #FFAB5B ส้มอ่อน
@@ -49,7 +51,8 @@ def home():
             Div(
                 H1("Welcome to Bus Booking System 🚌"),
                 style=
-                "font-family: 'Source Code Pro'; background-color: #DF6D14; padding: 20px; color: #f0f0f0; border-color: #DF6D14;"
+                "font-family: 'Arial'; background-color: #DF6D14; padding: 20px; color: #f0f0f0; border-color: #DF6D14;",
+                src = "background = 'LEGO_logo.png'"
                 ), 
                 
             Div(
@@ -80,7 +83,7 @@ def register_page():
             Div(
                 H1("Register 📝"),
                 style=
-                "font-family: 'JetBrains Mono'; background-color: #DF6D14; padding: 20px; color: #f0f0f0; border-color: #DF6D14;"
+                "font-family: 'Arial'; background-color: #DF6D14; padding: 20px; color: #f0f0f0; border-color: #DF6D14;"
             ),
 
             Div(
@@ -104,7 +107,8 @@ def register_page():
                 Input(type="email", name="email", placeholder="Email", required=True),
                 Input(type="password", name="password", placeholder="Password", required=True),
                 Button("Register", type="submit"),
-                method="post", action="/do_register"
+                method="post", action="/do_register",
+                style = "text-align: center; margin-top: 50px;"
             ),
             Button("Back", onclick = "window.location.href='/'")
         )
@@ -121,15 +125,38 @@ def do_register(email: str, password: str):
 def login_page():
     return Html(
         Body(
-            H2("Login"),
+            Div(
+                H1("Login 📝"),
+                style=
+                    "font-family: 'Arial'; background-color: #DF6D14; padding: 20px; color: #f0f0f0; border-color: #DF6D14;"
+            ),
+
+            Div(
+                Button(B("HOME"),
+                    onclick = "window.location.href='/'",
+                    style = "width: 200px; height: 30px; color: #DF6D14; background-color: #f0f0f0; border : none;",
+                    onmouseover = "this.style.backgroundColor = '#FFAB5B'; this.style.color = '#f0f0f0'; this.style.borderColor = '#f0f0f0'",
+                    onmouseout = "this.style.backgroundColor = '#f0f0f0'; this.style.color = '#DF6D14'; this.style.borderColor = '#f0f0f0'"
+                ),
+                Button(B("LOGIN"), 
+                    style = "width: 200px; height: 30px; color: #f0f0f0; background-color: #DF6D14; border : none;"
+                ),
+                Button(B("REGISTER"),
+                    onclick = "window.location.href='/register'",
+                    style = "width: 200px; height: 30px; color: #DF6D14; background-color: #f0f0f0; border : none;",
+                    onmouseover = "this.style.backgroundColor = '#FFAB5B'; this.style.color = '#f0f0f0'; this.style.borderColor = '#f0f0f0'",
+                    onmouseout = "this.style.backgroundColor = '#f0f0f0'; this.style.color = '#DF6D14'; this.style.borderColor = '#f0f0f0'"
+                ),
             Form(
                 Input(type="email", name="email", placeholder="Email", required=True),
                 Input(type="password", name="password", placeholder="Password", required=True),
                 Button("Login", type="submit"),
-                method="post", action="/do_login"
+                method="post", action="/do_login",
+                style = "text-align: center; margin-top: 50px;"
             ),
             Button("Back", onclick = "window.location.href='/'")
         )
+    )
     )
 
 @rt("/do_login")
