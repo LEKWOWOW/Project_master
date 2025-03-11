@@ -256,26 +256,20 @@ class Company:
         customer = next((c for c in self.__customers if c.user_id == customer_id), None)
         if not customer:
             return None, "❌ ไม่พบบัญชีลูกค้า"
-
         booking = next((b for b in customer.bookings if b.seat_number == int(seat_number)), None)
         if not booking:
             return None, "❌ ไม่พบการจอง"
-
-        print(f"🔍 กำลังค้นหา Schedule สำหรับ Bus Plate: {booking.bus.license_plate}")
+        existing_ticket = next((t for t in self.__ticket if t.booking.seat_number == int(seat_number)), None)
+        if existing_ticket:
+            return None, f"❌ ตั๋วนี้ถูกชำระเงินไปแล้ว (Ticket ID: {existing_ticket.ticket_id})"
         schedule = self.schedule_select(bus_plate=booking.bus.license_plate)
-
         if not schedule:
             return None, "❌ ไม่พบตารางเดินรถ"
-
         amount = schedule.ticket_price
         payment = Payment(booking, amount)
         ticket = payment.process_payment()
-
         if not ticket:
             return None, "❌ ไม่สามารถออกตั๋วได้"
-
         self.add_ticket(ticket)  
 
-        print(f"✅ Payment successful! Ticket ID: {ticket.ticket_id}")
         return ticket, f"✅ การชำระเงินเสร็จสิ้น! Ticket ID: {ticket.ticket_id}"
-        
