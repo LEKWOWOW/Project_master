@@ -1,9 +1,12 @@
+import json
+from datetime import datetime
+import os
 from fasthtml.common import *
 from create_instance import company
+
 app, rt = fast_app()
+
 session = {}
-
-
 
 @rt("/")
 def home():
@@ -27,7 +30,7 @@ def home():
     else:
         return Html(
             Body(
-                H1("ยินดีต้อนรับสู่บริษัท เห้อ บขสของเรา 🚌"),
+                H1("ยินดีต้อนสู่บริษัท เห้อ บขสของเรา 🚌"),
                 Div(
                     Button(B("HOME"), style="width: 200px; height: 30px;"),
                     Button(B("LOGIN"), onclick="window.location.href='/login'", style="width: 200px; height: 30px;"),
@@ -35,7 +38,6 @@ def home():
                 )
             )
         )
-
 
 @rt("/register")
 def register():
@@ -50,18 +52,6 @@ def register():
             )
         )
     )
-@rt("/process_login")
-def process_login(user_name: str = None, password: str = None):
-    if not user_name or not password:
-        return Html(Body(P("❌ ไม่เจอชื่อผู้ใช้หรือรหัสผ่าน"), A("Try Again", href="/login")))
-    
-    user = company.authenticate(user_name, password)
-    if user:
-        session["user_name"] = user.user_name
-        session["user_id"] = user.user_id
-        return Html(Body(P(f"✅ Login Successful! Welcome {user.user_name}"), A("Go to Home", href="/")))
-    else:
-        return Html(Body(P("❌ ไม่มีชื่อและรหัสอยู่ในระบบ"), A("Try Again", href="/login")))
 
 @rt("/process_register")
 def process_register(user_name: str = None, password: str = None):
@@ -70,10 +60,10 @@ def process_register(user_name: str = None, password: str = None):
     
     existing_user = company.get_customer_by_name(user_name)
     if existing_user:
-        return Html(Body(P("ชื่อนี้มีคนใช้ไปแล้วนะสุดหล่อ."), A("Try Again", href="/register")))
+        return Html(Body(P("ชื่อนี้มีคนใช้ไปแล้ว"), A("Try Again", href="/register")))
     
     user_id = company.add_customer(user_name, password)
-    return Html(Body(P(f"✅ สมัครได้แล้วนะจะ ID: {user_id}"), A("Go to Login", href="/login")))
+    return Html(Body(P(f"✅ สมัครสำเร็จ ID: {user_id}"), A("Go to Login", href="/login")))
 
 @rt("/login")
 def login():
@@ -89,30 +79,62 @@ def login():
         )
     )
 
+@rt("/process_login")
+def process_login(user_name: str = None, password: str = None):
+    if not user_name or not password:
+        return Html(Body(P("❌ ไม่เจอชื่อผู้ใช้หรือรหัสผ่าน"), A("Try Again", href="/login")))
+    
+    user = company.authenticate(user_name, password)
+    if user:
+        session["user_name"] = user.user_name
+        session["user_id"] = user.user_id
+        return Html(Body(P(f"✅ Login Successful! Welcome {user.user_name}"), A("Go to Home", href="/")))
+    else:
+        return Html(Body(P("❌ ไม่มีชื่อและรหัสในระบบ"), A("Try Again", href="/login")))
 
 @rt("/logout")
 def logout():
     session.clear() 
     return Html(Body(P("✅ Logged out successfully!"), A("Go to Home", href="/")))
+@rt("/select_bus")
+def select_bus(schedule_id: str = None):
+    schedule = company.schedule_select(schedule_id)
+    if not schedule:
+        return Html(Body(P("❌ ไม่พบตารางเดินรถ!"), A("กลับหน้าหลัก", href="/")))
+
+    return Html(
+        Body(
+            H2(f"เลือกรถสำหรับเส้นทาง {schedule.route}"),
+            Table(
+                Tr(Th("ชื่อรถ"), Th("ที่นั่งว่าง"), Th("เลือก")),
+                *[
+                    Tr(Td(b.bus_name), Td(f"{b.available_seat} ที่นั่ง"),
+                        Td(Button("เลือก", onclick=f"window.location.href='/select_seat?schedule_id={schedule_id}&bus_plate={b.license_plate}'")))
+                    for b in schedule.buses
+                ],
+            ),
+            A("ย้อนกลับ", href="/")
+        )
+    )
 
 @rt("/select_bus")
 def select_bus(schedule_id: str = None):
     schedule = company.schedule_select(schedule_id)
     if not schedule:
-        return Html(Body(P("❌ Schedule not found!"), A("Go to Home", href="/")))
+        return Html(Body(P("❌ ไม่พบตารางเดินรถ!"), A("กลับหน้าหลัก", href="/")))
 
     return Html(
         Body(
-            H2(f"Select Bus for {schedule.route}"),
+            H2(f"เลือกรถสำหรับเส้นทาง {schedule.route}"),
             Table(
-                Tr(Th("Bus Name"), Th("ที่นั่งคงเหลือ"), Th("สามารถจองได้")),
+                Tr(Th("ชื่อรถ"), Th("ที่นั่งว่าง"), Th("เลือก")),
                 *[
-                    Tr(Td(b.bus_name), Td(f"{b.available_seat} seats"),
-                        Td(Button("Select", onclick=f"window.location.href='/select_seat?schedule_id={schedule_id}&bus_plate={b.license_plate}'")))
+                    Tr(Td(b.bus_name), Td(f"{b.available_seat} ที่นั่ง"),
+                        Td(Button("เลือก", onclick=f"window.location.href='/select_seat?schedule_id={schedule_id}&bus_plate={b.license_plate}'")))
                     for b in schedule.buses
                 ],
             ),
-            A("Go Back", href="/")
+            A("ย้อนกลับ", href="/")
         )
     )
 @rt("/select_seat")
@@ -122,16 +144,16 @@ def select_seat(schedule_id: str = None, bus_plate: str = None):
 
     bus = company.get_bus(schedule_id, bus_plate)
     if not bus:
-        return Html(Body(P("❌ หารถไม่เจอถ้าไม่เจอส่วนมาคือเว็บมัคแดกไปละ"), A("Go to Home", href="/")))
+        return Html(Body(P("❌ ไม่พบรถบัสที่คุณเลือก"), A("Go to Home", href="/")))
 
     return Html(
         Body(
-            H2(f"Select Seat for {bus.bus_name}"),
+            H2(f"เลือกที่นั่งสำหรับ {bus.bus_name}"),
             Table(
                 Tr(*[Td(Button(str(seat), onclick=f"window.location.href='/book_seat?schedule_id={schedule_id}&bus_plate={bus_plate}&seat_number={seat}'"))
                     for seat in bus.seat_list]),
             ),
-            A("Go Back", href=f"/select_bus?schedule_id={schedule_id}")
+            A("ย้อนกลับ", href=f"/select_bus?schedule_id={schedule_id}")
         )
     )
 
@@ -145,9 +167,8 @@ def book_seat(schedule_id: str = None, bus_plate: str = None, seat_number: int =
 
     return Html(Body(
         P(booking_message),
-        A("Go to Home", href="/")
+        Div(A("Go to Home", href="/")),
+        Div(A("Payment", href="/pay_booking"), style="margin-top: 20px;")
     ))
-
-
 
 serve()
