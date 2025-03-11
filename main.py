@@ -11,8 +11,8 @@ def home():
     if user_name:
         return Html(
             Body(
-                H1(f"Welcome, {user_name} 🚌"),
-                H2("Available Bus Schedules"),
+                H1(f"ยินดีต้อนรับ, {user_name} 🚌"),
+                H2("ตารางรถที่กำลังจะออกเดินทาง"),
                 Table(
                     Tr(Th("Schedule ID"), Th("Route"), Th("Price"), Th("Actions")),
                     *[Tr(Td(s.schedule_id), Td(s.route), Td(f"{s.ticket_price} Baht"),
@@ -27,7 +27,7 @@ def home():
     else:
         return Html(
             Body(
-                H1("Welcome to Bus Booking System 🚌"),
+                H1("ยินดีต้อนรับสู่บริษัท เห้อ บขสของเรา 🚌"),
                 Div(
                     Button(B("HOME"), style="width: 200px; height: 30px;"),
                     Button(B("LOGIN"), onclick="window.location.href='/login'", style="width: 200px; height: 30px;"),
@@ -53,7 +53,7 @@ def register():
 @rt("/process_login")
 def process_login(user_name: str = None, password: str = None):
     if not user_name or not password:
-        return Html(Body(P("❌ Missing user name or password!"), A("Try Again", href="/login")))
+        return Html(Body(P("❌ ไม่เจอชื่อผู้ใช้หรือรหัสผ่าน"), A("Try Again", href="/login")))
     
     user = company.authenticate(user_name, password)
     if user:
@@ -61,12 +61,12 @@ def process_login(user_name: str = None, password: str = None):
         session["user_id"] = user.user_id
         return Html(Body(P(f"✅ Login Successful! Welcome {user.user_name}"), A("Go to Home", href="/")))
     else:
-        return Html(Body(P("❌ Invalid User Name or Password!"), A("Try Again", href="/login")))
+        return Html(Body(P("❌ ไม่มีชื่อและรหัสอยู่ในระบบ"), A("Try Again", href="/login")))
 
 @rt("/process_register")
 def process_register(user_name: str = None, password: str = None):
     if not user_name or not password:
-        return Html(Body(P("❌ Missing username or password!"), A("Try Again", href="/register")))
+        return Html(Body(P("❌ ไม่เจอชื่อผู้ใช้หรือรหัสผ่าน"), A("Try Again", href="/register")))
     
     existing_user = company.get_customer_by_name(user_name)
     if existing_user:
@@ -105,7 +105,7 @@ def select_bus(schedule_id: str = None):
         Body(
             H2(f"Select Bus for {schedule.route}"),
             Table(
-                Tr(Th("Bus Name"), Th("Available Seats"), Th("Actions")),
+                Tr(Th("Bus Name"), Th("ที่นั่งคงเหลือ"), Th("สามารถจองได้")),
                 *[
                     Tr(Td(b.bus_name), Td(f"{b.available_seat} seats"),
                         Td(Button("Select", onclick=f"window.location.href='/select_seat?schedule_id={schedule_id}&bus_plate={b.license_plate}'")))
@@ -134,9 +134,6 @@ def select_seat(schedule_id: str = None, bus_plate: str = None):
             A("Go Back", href=f"/select_bus?schedule_id={schedule_id}")
         )
     )
-
-
-
 
 @rt("/book_seat")
 def book_seat(schedule_id: str = None, bus_plate: str = None, seat_number: int = None):

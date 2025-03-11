@@ -8,7 +8,7 @@ class Bus:
         self.__bus_name = bus_name
         self.__capacity = capacity
         self.__available_seat = capacity
-        self.__seat_list = list(range(1, capacity + 1))  # ที่นั่งเริ่มต้น 1 ถึง capacity
+        self.__seat_list = list(range(1, capacity + 1))  
 
     @property
     def license_plate(self):
