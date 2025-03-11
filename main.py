@@ -92,8 +92,7 @@ def login():
 
 @rt("/logout")
 def logout():
-    global logged_in_user
-    logged_in_user = None
+    session.clear() 
     return Html(Body(P("✅ Logged out successfully!"), A("Go to Home", href="/")))
 
 @rt("/select_bus")
@@ -119,11 +118,11 @@ def select_bus(schedule_id: str = None):
 @rt("/select_seat")
 def select_seat(schedule_id: str = None, bus_plate: str = None):
     if "user_name" not in session:
-        return Html(Body(P("⚠️ Please login first!"), A("Go to Login", href="/login")))
+        return Html(Body(P("⚠️ กรุณาล็อคอินก่อนนะ"), A("Go to Login", href="/login")))
 
     bus = company.get_bus(schedule_id, bus_plate)
     if not bus:
-        return Html(Body(P("❌ Bus not found!"), A("Go to Home", href="/")))
+        return Html(Body(P("❌ หารถไม่เจอถ้าไม่เจอส่วนมาคือเว็บมัคแดกไปละ"), A("Go to Home", href="/")))
 
     return Html(
         Body(
