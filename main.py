@@ -170,5 +170,71 @@ def book_seat(schedule_id: str = None, bus_plate: str = None, seat_number: int =
         Div(A("Go to Home", href="/")),
         Div(A("Payment", href="/pay_booking"), style="margin-top: 20px;")
     ))
+@rt("/pay_booking")
+def pay_booking():
+    """ แสดงรายการที่ต้องชำระเงิน """
+    if "user_name" not in session:
+        return Html(Body(P("⚠️ กรุณาล็อคอินก่อนนะ"), A("Go to Login", href="/login")))
+
+    customer = company.get_customer_by_name(session.get("user_name"))
+
+    if not customer or not customer.bookings:
+        return Html(Body(P("❌ ไม่มีรายการที่ต้องชำระเงิน"), A("Go to Home", href="/")))
+
+    return Html(
+        Body(
+            H2("💰 รายการที่ต้องชำระ"),
+            Table(
+                Tr(Th("Bus Name"), Th("Seat Number"), Th("Amount"), Th("Action")),
+                *[
+                    Tr(
+                        Td(booking.bus.bus_name),
+                        Td(booking.seat_number),
+                        Td(f"{company.schedule_select(bus_plate=booking.bus.license_plate).ticket_price if company.schedule_select(bus_plate=booking.bus.license_plate) else 'N/A'} Baht"),
+                        Td(Button("🛒 ชำระเงิน", onclick=f"window.location.href='/process_payment?seat_number={booking.seat_number}'"))
+                    ) for booking in customer.bookings
+                ]
+            ),
+            A("ย้อนกลับ", href="/")
+        )
+    )
+
+@rt("/process_payment")
+def process_payment(seat_number: int = None):
+    """ ดำเนินการชำระเงิน และออกตั๋ว """
+    if "user_name" not in session:
+        return Html(Body(P("⚠️ กรุณาล็อคอินก่อนนะ"), A("Go to Login", href="/login")))
+
+    customer_id = session.get("user_id")
+    ticket, message = company.process_payment(customer_id, seat_number)
+
+    if not ticket:
+        return Html(Body(P(message), A("Go Back", href="/pay_booking")))
+
+    return Html(
+        Body(
+            H2("✅ ชำระเงินสำเร็จ!"),
+            P(f"ที่นั่ง {ticket.booking.seat_number} ได้รับการจองเรียบร้อยแล้ว"),
+            P(f"🎟️ Ticket ID: {ticket.ticket_id}"),
+            P(f"📅 ออกตั๋วเมื่อ: {ticket.issued_date}"),
+            A("📄 ดูตั๋วของฉัน", href="/view_tickets"),
+            A("🏠 กลับหน้าหลัก", href="/")
+        )
+    )
+@rt("/view_tickets")
+def view_tickets():
+    """ แสดงรายการตั๋วของลูกค้า """
+    if "user_name" not in session:
+        return Html(Body(P("⚠️ กรุณาล็อคอินก่อนนะ"), A("Go to Login", href="/login")))
+
+    tickets = company.view_ticket()
+    
+    return Html(
+        Body(
+            H2("🎟️ รายการตั๋วของฉัน"),
+            Ul(*[Li(ticket) for ticket in tickets]),
+            A("🏠 กลับหน้าหลัก", href="/")
+        )
+    )
 
 serve()

@@ -169,16 +169,26 @@ class Company:
     def __init__(self):
         self.__schedules = []
         self.__customers = []
+        self.__ticket = []
+    def view_ticket(self):
+        if not self.__ticket:
+            return ["❌ ไม่มีตั๋วที่ออกในระบบ"]
+        ticket_list = []
+        for ticket in self.__ticket:
+            ticket_list.append(f"🎟️ Ticket ID: {ticket.ticket_id}, ที่นั่ง: {ticket.booking.seat_number}, ออกเมื่อ: {ticket.issued_date}")
+        return ticket_list
 
     @property
     def schedules(self):
         return self.__schedules
-
+    def add_ticket(self, ticket):
+        existing_ticket = next((t for t in self.__ticket if t.ticket_id == ticket.ticket_id), None)
+        if not existing_ticket:
+            self.__ticket.append(ticket)
     def get_bus(self, schedule_id, bus_plate):
         schedule = next((s for s in self.__schedules if s.schedule_id == schedule_id), None)
         if not schedule:
             return None
-
         cleaned_bus_plate = bus_plate.replace("%20", " ").strip()
         return next((b for b in schedule.buses if b.license_plate == cleaned_bus_plate), None)
 
@@ -221,5 +231,36 @@ class Company:
         self.__customers.append(new_customer)
         return new_customer.user_id
 
-    def schedule_select(self, schedule_id):
-        return next((s for s in self.__schedules if s.schedule_id == schedule_id), None)
+    def schedule_select(self, schedule_id=None, bus_plate=None):
+        if schedule_id:
+            return next((s for s in self.__schedules if s.schedule_id == schedule_id), None)
+        elif bus_plate:
+            return next((s for s in self.__schedules if any(b.license_plate == bus_plate for b in s.buses)), None)
+        return None
+    def process_payment(self, customer_id, seat_number):
+        customer = next((c for c in self.__customers if c.user_id == customer_id), None)
+        if not customer:
+            return None, "❌ ไม่พบบัญชีลูกค้า"
+
+        booking = next((b for b in customer.bookings if b.seat_number == int(seat_number)), None)
+        if not booking:
+            return None, "❌ ไม่พบการจอง"
+
+        print(f"🔍 กำลังค้นหา Schedule สำหรับ Bus Plate: {booking.bus.license_plate}")
+        schedule = self.schedule_select(bus_plate=booking.bus.license_plate)
+
+        if not schedule:
+            return None, "❌ ไม่พบตารางเดินรถ"
+
+        amount = schedule.ticket_price
+        payment = Payment(booking, amount)
+        ticket = payment.process_payment()
+
+        if not ticket:
+            return None, "❌ ไม่สามารถออกตั๋วได้"
+
+        self.add_ticket(ticket)  
+
+        print(f"✅ Payment successful! Ticket ID: {ticket.ticket_id}")
+        return ticket, f"✅ การชำระเงินเสร็จสิ้น! Ticket ID: {ticket.ticket_id}"
+        
