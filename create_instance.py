@@ -1,9 +1,5 @@
 from booking import Company,Bus,Schedule
 company = Company()
-schedule1 = Schedule("S1", "Bangkok - Phuket", 600)
-bus1 = Bus("กพ 289 กรุงเทพ", "รถธรรมดา", 10)
-schedule1.add_bus(bus1)
-company.add_schedule(schedule1)
 schedules_data = [
     ("S1", "Bangkok - Phuket", 600),
     ("S2", "Phuket - Bangkok", 786),
@@ -32,12 +28,15 @@ buses_data = [
     ("นค 456 นครราชสีมา", "รถปรับอากาศ", 15),
 ]
 for schedule_id, route, price in schedules_data:
-    schedule = Schedule(schedule_id, route, price)  
-    company.add_schedule(schedule)  
-    
+    schedule = Schedule(schedule_id, route, price)  #
+
     for plate, name, cap in buses_data:
         bus = Bus(plate, name, cap)  
-        schedule.add_bus(bus) 
+        schedule.add_bus(bus)  
+
+    company.add_schedule(schedule)  
+
+# ตรวจสอบว่ารถบัสถูกเพิ่มจริงหรือไม่
 print(f"📌 Total schedules: {len(company.schedules)}")  
 for s in company.schedules:
     print(f"🚌 {s.schedule_id}: {s.route} (Price: {s.ticket_price} Baht, Buses: {len(s.buses)})")

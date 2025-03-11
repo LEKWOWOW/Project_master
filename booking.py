@@ -32,6 +32,10 @@ class Bus:
     def is_available(self):
         return self.__available_seat > 0
 
+    @property
+    def seat_list(self):
+        return self.__seat_list
+
 class Schedule:
     def __init__(self, schedule_id, route, ticket_price):
         self.__schedule_id = schedule_id
@@ -103,13 +107,30 @@ class Company:
     @property
     def schedules(self):
         return self.__schedules
+    def get_bus(self, schedule_id, bus_plate):
+        schedule = next((s for s in self.__schedules if s.schedule_id == schedule_id), None)
+        if not schedule:
+            return None
+        return next((b for b in schedule.buses if b.license_plate == bus_plate), None)
     
     def add_schedule(self, schedule):
         existing_schedule = next((s for s in self.__schedules if s.schedule_id == schedule.schedule_id), None)
         if not existing_schedule:
             self.__schedules.append(schedule)
             self._save_data()
-    
+    def book_seat(self, customer_id, schedule_id, bus_plate, seat_number):
+        customer = next((c for c in self.__customers if c.user_id == customer_id), None)
+        bus = self.get_bus(schedule_id, bus_plate)
+
+        if not customer or not bus:
+            return "❌ จองไม่ได้นะเอ้อ"
+
+        if bus.book_seat_by_number(seat_number):
+            customer.bookings.append(f"Booking: {bus.bus_name}, Seat: {seat_number}")
+            self._save_data()
+            return f"✅ Seat {seat_number} booked successfully for {bus.bus_name}!"
+        else:
+            return "❌ จองไม่ได้นะเอ้อ"
     def get_customer_by_name(self, user_name):
         return next((c for c in self.__customers if c.user_name == user_name), None)
     def authenticate(self, user_name, password):
@@ -121,7 +142,11 @@ class Company:
         self.__customers.append(new_customer)
         self._save_data()
         return new_customer.user_id
-
+    def booking_seat():
+        pass
+    def schedule_select(self,schedule_id):
+        return next((b for b in self.__schedules if b.schedule_id == schedule_id),None)
+    
     def _save_data(self):
         data = {
             "customers": [
@@ -149,19 +174,18 @@ class Company:
         try:
             with open("company_data.json", "r") as file:
                 data = json.load(file)
-               
                 Account.user_id_counter = data.get("user_id_counter", 1)
                 for user in data.get("customers", []):
                     customer = Customer(user["user_name"], user["password"])
-                    customer._Account__user_id = user["user_id"] 
+                    customer._Account__user_id = user["user_id"]
                     self.__customers.append(customer)
-                
+
                 for sched in data.get("schedules", []):
                     schedule = Schedule(sched["schedule_id"], sched["route"], sched["ticket_price"])
-                    self.add_schedule(schedule)
                     for bus in sched.get("buses", []):
                         bus_instance = Bus(bus["license_plate"], bus["bus_name"], bus["capacity"])
-                        schedule.add_bus(bus_instance)
+                        schedule.add_bus(bus_instance)  
+
+                    self.add_schedule(schedule)  
         except FileNotFoundError:
             pass
-
