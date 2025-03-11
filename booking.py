@@ -164,7 +164,6 @@ class Payment:
     def process_payment(self):
         self.__status = "ดำเนินการเสณ้จสิ้นแล้วค่ะ"
         return Ticket(self.__booking)
-
 class Company:
     def __init__(self):
         self.__schedules = []
@@ -173,11 +172,27 @@ class Company:
     def view_ticket(self):
         if not self.__ticket:
             return ["❌ ไม่มีตั๋วที่ออกในระบบ"]
+
         ticket_list = []
         for ticket in self.__ticket:
-            ticket_list.append(f"🎟️ Ticket ID: {ticket.ticket_id}, ที่นั่ง: {ticket.booking.seat_number}, ออกเมื่อ: {ticket.issued_date}")
+            ticket_list.append(f"{ticket.ticket_id}, {ticket.booking.seat_number}, {ticket.issued_date}")
         return ticket_list
 
+    def refund_ticket(self, customer_id, ticket_id):
+        customer = next((c for c in self.__customers if c.user_id == customer_id), None)
+        if not customer:
+            return None, "❌ ไม่พบบัญชีลูกค้า"
+
+        ticket = next((t for t in self.__ticket if t.ticket_id == ticket_id), None)
+        if not ticket:
+            return None, "❌ ไม่พบตั๋วในระบบ"
+        self.__ticket.remove(ticket)
+        ticket.booking.bus.seat_list.append(ticket.booking.seat_number)
+        ticket.booking.bus.seat_list.sort() 
+        ticket.booking._Booking__status = "Refunded"
+
+        print(f"🔄 Refund successful! Ticket ID: {ticket.ticket_id}")
+        return ticket, f"✅ คืนเงินสำเร็จ! Ticket ID: {ticket.ticket_id} ได้รับการยกเลิก"
     @property
     def schedules(self):
         return self.__schedules

@@ -221,6 +221,35 @@ def process_payment(seat_number: int = None):
             A("🏠 กลับหน้าหลัก", href="/")
         )
     )
+
+@rt("/refund_ticket")
+def refund_ticket(ticket_id: str = None):
+    """ ดำเนินการขอคืนเงิน """
+    if "user_name" not in session:
+        return Html(Body(P("⚠️ กรุณาล็อคอินก่อนนะ"), A("Go to Login", href="/login")))
+
+    customer_id = session.get("user_id")
+    ticket, message = company.refund_ticket(customer_id, ticket_id)
+
+    if not ticket:
+        return Html(Body(P(message), A("Go Back", href="/view_tickets")))
+    remaining_tickets = company.view_ticket()
+    if not remaining_tickets:
+        return Html(Body(
+            H2("🎟️ รายการตั๋วของฉัน"),
+            P("❌ ไม่มีตั๋วที่ออกในระบบ"),
+            A("🏠 กลับหน้าหลัก", href="/")
+        ))
+
+    return Html(
+        Body(
+            H2("✅ คืนเงินสำเร็จ!"),
+            P(f"🎟️ Ticket ID: {ticket.ticket_id} ถูกยกเลิกแล้ว"),
+            A("📄 ดูตั๋วของฉัน", href="/view_tickets"),
+            A("🏠 กลับหน้าหลัก", href="/")
+        )
+    )
+
 @rt("/view_tickets")
 def view_tickets():
     """ แสดงรายการตั๋วของลูกค้า """
@@ -228,11 +257,28 @@ def view_tickets():
         return Html(Body(P("⚠️ กรุณาล็อคอินก่อนนะ"), A("Go to Login", href="/login")))
 
     tickets = company.view_ticket()
-    
+
+    if not tickets:
+        return Html(Body(
+            H2("🎟️ รายการตั๋วของฉัน"),
+            P("❌ ไม่มีตั๋วที่ออกในระบบ"),
+            A("🏠 กลับหน้าหลัก", href="/")
+        ))
+
     return Html(
         Body(
             H2("🎟️ รายการตั๋วของฉัน"),
-            Ul(*[Li(ticket) for ticket in tickets]),
+            Table(
+                Tr(Th("Ticket ID"), Th("Seat Number"), Th("Issued Date"), Th("Action")),
+                *[
+                    Tr(
+                        Td(ticket.split(", ")[0]),  
+                        Td(ticket.split(", ")[1]), 
+                        Td(ticket.split(", ")[2]),  
+                        Td(Button("🔄 ขอคืนเงิน", onclick=f"window.location.href='/refund_ticket?ticket_id={ticket.split(', ')[0]}'"))
+                    ) for ticket in tickets
+                ]
+            ),
             A("🏠 กลับหน้าหลัก", href="/")
         )
     )
