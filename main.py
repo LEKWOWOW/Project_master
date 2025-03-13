@@ -348,7 +348,7 @@ def bus_schedule():
     if not schedules:
         return Html(Body(P("❌ ไม่พบตารางเดินรถ!", _class="error"), A("กลับหน้าหลัก", href="/")))
 
-    user_name = session.get("user_name")  # เช็คว่าผู้ใช้ล็อกอินหรือไม่
+    user_name = session.get("user_name")  
 
     return Html(
         Head(
@@ -594,14 +594,13 @@ def process_payment(seat_number: int = None):
     print(f"DEBUG: session = {session}")  # ✅ Debug session
     if "user_name" not in session:  
         print(session)
-        return Html(Body(P("⚠️ กรุณาล็อคอินก่อนนะ"), A("Go to Login", href="/login")))
+        return Redirect("/show_ar")
 
     customer_id = session.get("user_id")
     print(f"DEBUG: customer_id = {customer_id}")  # ✅ Debug user_id
 
     if not customer_id:
         return Redirect("/show_ar")
-
     ticket, message = company.process_payment(customer_id, seat_number)
 
     if not ticket:
