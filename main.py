@@ -30,12 +30,13 @@ def home():
             ),
             Body(
                 Header(
-                    H4("REFLECTV", _class="logo"),
+                    H4("Good_job", _class="logo"),
                     Nav(
                         A("Register", _class="menu-item", href="/register"),
                         A("Login", _class="menu-item", href="/login"),
-                        A("Home", _class="menu-item disabled", href="/bus_schedule"),
-                        A("ดูตั๋ว", _class="menu-item disabled", href="/view_tickets"),
+                         A("Logout", _class="menu-item", href="/logout"),
+                        A("Home", _class="menu-item ", href="/bus_schedule"),
+                        A("ดูตั๋ว", _class="menu-item ", href="/view_tickets"),
                     )
                 ),
                 Div(
@@ -55,8 +56,39 @@ def home():
                 )
             ), _class="home-page"
         )
-    else:
-        return Redirect("/bus_schedule")
+    return Html(
+            Head(
+                Link(rel="stylesheet", href="/static/style.css")
+            ),
+            Body(
+                Header(
+                    H4("Good_job", _class="logo"),
+                    Nav(
+                        A("Register", _class="menu-item", href="/register"),
+                        A("Login", _class="menu-item", href="/login"),
+                         A("Logout", _class="menu-item", href="/logout"),
+                        A("Home", _class="menu-item ", href="/bus_schedule"),
+                        A("ดูตั๋ว", _class="menu-item ", href="/view_tickets"),
+                    )
+                ),
+                Div(
+                    Div(Div(_class="front"), Div(_class="back"), _class="panel"),
+                    Div(Div(_class="front"), Div(_class="back"), _class="panel"),
+                    Div(Div(_class="front"), Div(_class="back"), _class="panel"),
+                    Div(Div(_class="front"), Div(_class="back"), _class="panel"),
+                    _class="container",
+                ),
+                Div(
+                    H1("บริษัท", Span("ขนส่ง", _class="pink"), " บขส"),
+                    _class="layer",
+                ),
+                Footer(
+                    P("บขสร้ายๆ ", A("กลับหน้าหลัก", href="/", _class="link"), ". 24/3"),
+                    Div("", _class="")
+                )
+            ), _class="home-page"
+        )
+   
 
 @rt("/user_profile")
 def user_profile():
@@ -105,6 +137,36 @@ def show_invalid():
             Div(
                 H1("❌ INVALID ❌", _class="invalid-title"),
                 P("ขออภัย! คุณไม่มีสิทธิ์เข้าถึงหน้านี้", _class="invalid-text"),
+                Button("กลับไปหน้าหลัก", _class="invalid-btn", onclick="window.location.href='/'"),
+                _class="invalid-container"
+            )
+        )
+    )
+@rt("/show_P")
+def show_invalid():
+    return Html(
+        Head(
+            Link(rel="stylesheet", href="/static/invalid.css")
+        ),
+        Body(
+            Div(
+                H1("❌ มีคนใช้ชื่อนี้ไปแล้ว ❌", _class="invalid-title"),
+                P("กรุณาใช้ชื่ออื่น", _class="invalid-text"),
+                Button("กลับไปหน้าหลัก", _class="invalid-btn", onclick="window.location.href='/'"),
+                _class="invalid-container"
+            )
+        )
+    )
+@rt("/show_l")
+def show_invalid():
+    return Html(
+        Head(
+            Link(rel="stylesheet", href="/static/invalid.css")
+        ),
+        Body(
+            Div(
+                H1("❌ ไม่พบชื่อผู้ใช้นี้ ❌", _class="invalid-title"),
+                P(" ไม่พบชื่อผู้ใช้นี้", _class="invalid-text"),
                 Button("กลับไปหน้าหลัก", _class="invalid-btn", onclick="window.location.href='/'"),
                 _class="invalid-container"
             )
@@ -199,11 +261,11 @@ def process_register(user_name: str = None, password: str = None):
     print(f"📌 Register request received: user_name={user_name}, password={password}")
     if not user_name or not password:
         print(f"📌 Register request received: user_name={user_name}, password={password}")
-        return Redirect ("/show_invalid")
+        return Redirect ("/show_P")
     
     existing_user = company.get_customer_by_name(user_name)
     if existing_user:
-        return Redirect ("/show_invalid")
+        return Redirect ("/show_P")
     
     session["user_name"] = user_name
     session["user_id"] = company.add_customer(user_name, password)
@@ -247,19 +309,19 @@ def register():
  
 @rt("/process_login")
 def process_login(user_name: str = None, password: str = None):
-    print(f"DEBUG: login request user_name={user_name}, password={password}")  # ✅ Debug
+    print(f"DEBUG: login request user_name={user_name}, password={password}")  
 
     if not user_name or not password:
         return Redirect ("/show_invalid")
 
     user = company.authenticate(user_name, password)
     if user:
-        session["user_name"] = user.user_name  # ✅ เช็กให้แน่ใจว่าถูกเซ็ต
+        session["user_name"] = user.user_name  
         session["user_id"] = user.user_id
-        print(f"DEBUG: session = {session}")  # ✅ Debug session หลัง login
+        print(f"DEBUG: session = {session}")  #
         return Redirect("/user_profile")
     else:
-        return Redirect("/login")
+        return Redirect("/show_l")
 
 @rt("/logout")
 def logout():
@@ -285,6 +347,8 @@ def bus_schedule():
 
     if not schedules:
         return Html(Body(P("❌ ไม่พบตารางเดินรถ!", _class="error"), A("กลับหน้าหลัก", href="/")))
+
+    user_name = session.get("user_name")  # เช็คว่าผู้ใช้ล็อกอินหรือไม่
 
     return Html(
         Head(
@@ -314,11 +378,16 @@ def bus_schedule():
                     ],
                     _class="bus-table"
                 ),
-                Button("🏠 Logout", _class="home-btn", onclick="window.location.href='/logout';"),
+                Div(
+                    Button("🏠 HOME", _class="home-btn", onclick="window.location.href='/';"),
+                    Button("🎫 ดูตั๋วของฉัน", _class="home-btn", onclick="window.location.href='/view_tickets';") if user_name else "",
+                    _class="button-group"
+                ),
                 _class="schedule-container"
             )
         )
     )
+
 
 @rt("/select_bus")
 def select_bus(schedule_id: str = None):
@@ -575,8 +644,8 @@ def view_tickets():
     if "user_name" not in session:
         return Redirect ("/show_ar")
 
-    customer_id = session.get("user_id")  # ✅ ดึง customer_id จาก session
-    tickets = company.view_ticket(customer_id)  # ✅ ส่ง customer_id ไปกรองข้อมูล
+    customer_id = session.get("user_id")  
+    tickets = company.view_ticket(customer_id)  
 
     if not tickets or tickets == ["❌ ไม่มีตั๋วที่ออกในระบบ"]:
         return Html(
@@ -613,6 +682,7 @@ def view_tickets():
                     _class="ticket-list"
                 ),
                 A("🏠 กลับหน้าหลัก", href="/", _class="btn home-btn"),
+            
                 _class="ticket-container"
             )
         )
