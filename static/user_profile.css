@@ -1,0 +1,81 @@
+/* 🌟 พื้นหลัง */
+body {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    font-family: "Poppins", sans-serif;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 📌 กล่องโปรไฟล์ */
+.profile-container {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    backdrop-filter: blur(10px);
+}
+
+/* 🖼️ รูปโปรไฟล์ */
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid white;
+    object-fit: cover;
+    margin-bottom: 15px;
+    box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.3);
+}
+
+/* 🏷️ ชื่อผู้ใช้ */
+.user-name {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+/* 📧 ข้อมูลผู้ใช้ */
+.user-email, .user-username, .user-joined {
+    font-size: 1.1rem;
+    margin-top: 10px;
+    opacity: 0.9;
+}
+
+/* 🎨 กลุ่มปุ่ม */
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* 🔘 ปุ่ม */
+.edit-btn, .logout-btn {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 🎨 สีของปุ่ม */
+.edit-btn {
+    background: #2ed573;
+}
+
+.logout-btn {
+    background: #ff6b6b;
+}
+
+/* ✨ เอฟเฟกต์ Hover */
+.edit-btn:hover, .logout-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}

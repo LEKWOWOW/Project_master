@@ -1,0 +1,52 @@
+/* 🌟 ตั้งค่าพื้นฐานของหน้า */
+body {
+    background: linear-gradient(135deg, #1116be, rgb(0, 153, 120));
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 🔥 กล่องแสดงข้อความ */
+.invalid-container {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+/* 🚨 ข้อความ INVALID */
+.invalid-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ff55c9;
+    text-shadow: 0 0 10px #ffaaaa;
+}
+
+/* 📌 ข้อความแจ้งเตือน */
+.invalid-text {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+/* 🔘 ปุ่มกลับ */
+.invalid-btn {
+    background: #337aff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.invalid-btn:hover {
+    background: #0092cc;
+}

@@ -1,0 +1,57 @@
+/* ✅ หน้า Special */
+.special-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #222; /* สีพื้นหลังเข้ม */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  .special-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 60%;
+  }
+  
+  .special-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    transform: rotate(-5deg);
+    transition: transform 0.3s ease;
+  }
+  
+  .special-item:hover {
+    transform: rotate(0deg) scale(1.05);
+  }
+  
+  /* 🔢 กล่องตัวเลข */
+  .special-item .date {
+    background: black;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    border-radius: 8px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .special-item .text {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+  }

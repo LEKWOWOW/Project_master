@@ -1,0 +1,75 @@
+/* static/refund_success.css */
+body {
+    background: linear-gradient(to right, #74ebd5, #acb6e5);
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.refund-container {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.refund-title {
+    color: #27ae60;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.refund-message {
+    font-size: 16px;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+    transition: 0.3s ease;
+}
+
+.ticket-btn {
+    background: #e67e22;
+}
+
+.home-btn {
+    background: #3498db;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

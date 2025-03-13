@@ -1,0 +1,91 @@
+/* static/payment_success.css */
+body {
+    background: linear-gradient(to right, #6dd5ed, #2193b0);
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.payment-card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.success-title {
+    color: #28a745;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.seat-info {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.ticket-label, .date-label {
+    font-weight: bold;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.ticket-id, .date-info {
+    font-size: 16px;
+    color: #555;
+}
+
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    transition: 0.3s ease;
+}
+
+.ticket-btn {
+    background: #007bff;
+}
+
+.home-btn {
+    background: #28a745;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,69 @@
+/* 🌟 ตั้งค่าพื้นฐานของ popup */
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* 🟩 แสดง popup เมื่อ active */
+.popup-container.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 📌 กล่องข้อความ popup */
+.popup-box {
+    background: white;
+    padding: 20px;
+    width: 350px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+}
+
+/* 🌟 เมื่อ popup เปิด */
+.popup-container.active .popup-box {
+    transform: scale(1);
+}
+
+/* ❌ ปุ่มปิด popup */
+.popup-close {
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 15px;
+    transition: background 0.3s ease;
+}
+
+.popup-close:hover {
+    background: darkred;
+}
+
+/* 🔘 ปุ่มเปิด popup */
+.popup-btn {
+    background: blue;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.popup-btn:hover {
+    background: darkblue;
+}
